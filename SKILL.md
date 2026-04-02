@@ -1,10 +1,10 @@
 ---
-name: Kalshi-Matching-Skill
-description: A skill that searches Kalshi markets for equal market arbitrage
+name: Kalshi-Researcher-Skill
+description: A skill that searches Kalshi markets for arbitrage opportunities
 ---
-# Kalshi Equal Market Arbitrage Finding Skill
+# Kalshi Market Arbitrage Finding Skill
 
-Looks for Arbitrage Opportunities in Kalshi where a futures market and a game market are equal. 
+Looks for Arbitrage Opportunities in Kalshi where a futures market and a game market are mispriced against each other. 
 
 ## Step 0: Install Dependencies
 
@@ -14,14 +14,52 @@ If you haven't installed dependencies yet (or you're in a fresh virtual environm
 python -m pip install -r requirements.txt
 ```
 
-## Step 1: Gather the Markets
+## Step 1: Ask for Market Inputs
 
-Run the market fetching script that will collect all the potential markets for this task:
+First check whether the user already provided market codes in their request.
+
+- If market codes are already present, use those exact codes and do not ask again.
+- If market codes are not present, ask the user which market codes to scan (one or more).
+
+Valid values are the keys in `scripts/markets.json` (for example: `MPBK`, `NHL`, `EPL`, `MCBK`).
+
+If the user provides multiple values, keep their order and pass all of them to the script as CLI arguments.
+
+### Multi-code execution order
+
+If the user provides multiple market codes, process them strictly one at a time in the order provided.
+
+For each code:
+- Run market gathering for that single code.
+- Parse output using the OpenClaw parsing rules.
+- Run matching/comparison logic for that code only.
+- Produce the per-code reasoning output.
+- Clear or discard the previous code's raw output from active context before starting the next code.
+
+Only after fully completing the full workflow for the current code should the agent move to the next code.
+
+## Step 2: Gather the Markets
+
+Run the market fetching script with the user-provided market codes:
 ```bash
-python scripts/kalshi_markets.py
+python scripts/kalshi_markets.py <MARKET_CODE_1> <MARKET_CODE_2> ...
+```
+
+Example:
+```bash
+python scripts/kalshi_markets.py MPBK NHL
 ```
 
 This will output all the markets and their primary and secondary rules in a json format. The rules will define the nature of the market.
+
+### OpenClaw output parsing rules
+
+When OpenClaw reads the script output, it must branch based on the status text:
+
+- If the output contains the exact line `Game and Futures Markets are together`, treat the next JSON block under `Game and Futures Markets Combined:` as a single unified market list and follow the combined-market matching logic.
+- Otherwise, treat output as split mode: parse the JSON block after `Game Markets:` as the game list and the JSON block after `Futures Markets:` as the futures list, then compare these two lists separately.
+
+Do not assume combined mode unless the exact `Game and Futures Markets are together` text appears.
 
 ### Market JSON schema
 
@@ -39,69 +77,20 @@ Example market object:
 }
 ```
 
-## Step 2: Compare Market Pairs
+## Step 3: Route to the Correct Comparison Instructions
 
-Compare every possible pair of markets to determine if they could end up being a matching market pair. Use these rules to check if this could possibly happen:
+Check what comparison mode the user asked for:
 
-### Deterministic matching checklist
+- If the user asked for **one way** only, read and execute `oneway.md`.
+- If the user asked for **equal market** only, read and execute `equal_market.md`.
+- If the user asked for **both**, read and execute `oneway.md` first, then `equal_market.md`.
 
-For each market (primarily using `rules_primary`), extract and normalize:
-- **Sport/league** (NBA/MLB/NHL/etc.)
-- **Teams/participants** (canonical team names when applicable)
-- **Event identity** (who vs who, plus round/game qualifiers)
-- **Timing** (scheduled date/time window if present)
-- **Market type** (future vs single-event vs series; and prop type like totals/spread/moneyline)
+If the user did not clearly specify one way, equal market, or both, ask a clarification question before running comparison logic.
 
-Only consider two markets a plausible matching pair if all are true:
-- **Same sport and league** after normalization
-- **Same underlying event identity**, OR an explicitly equivalent end-condition (for a futures ↔ event convergence case)
-- **Compatible market types** (they resolve on the same real-world outcome)
-
-### Do not match unless… (guardrails)
-
-Reject candidate pairs when any of these differ materially:
-- League level (e.g., NBA vs NCAA)
-- Season/year or scheduled date window (when rule text specifies it)
-- Participants/teams (after applying aliases)
-- Event stage/round (regular season vs playoffs; Finals Game 7 vs Finals Game 6; etc.)
-
-Treat `rules_secondary` clauses (e.g., postponement/reschedule windows) as settlement mechanics; they typically do not change the underlying event identity.
-
-### Normalization / Alias Map
-
-Kalshi market titles/rules may use different naming conventions for the same underlying league/team.
-Before deciding whether two markets are about the *same* sport/league/team, normalize the text (especially inside `rules_primary`) using the alias map.
-
-**Basic normalization (apply before alias lookup):**
-- lowercase for comparisons
-- strip punctuation and collapse repeated whitespace
-- normalize common shorthands where context supports it (e.g., "LA" → "Los Angeles")
-
-**League aliases:**
-- "Pro Basketball" → "NBA"
-- "Pro Baseball" → "MLB"
-
-**Team aliases:**
-- "Los Angeles L" → "Los Angeles Lakers"
-- "Los Angeles C" → "Los Angeles Clippers"
-- "Los Angeles A" → "Los Angeles Angels"
-- "Los Angeles D" → "Los Angeles Dodgers"
-- "New York Y" → "New York Yankees"
-- "New York M" → "New York Mets"
-- "Chicago C" → "Chicago Cubs"
-- "Chicago WS" → "Chicago White Sox"
-
-**Notes:**
-- Prefer the most specific canonical name (e.g., team full name over shorthand).
-- Apply aliases consistently across both markets before comparing.
-- If an alias could be ambiguous (e.g., "Los Angeles A"), use league context from the rule text (e.g., "professional baseball" → MLB) to disambiguate.
-
-## Step 3: Explain Reasoning
-
-When proposing a matching market pair, include:
-- the two market `ticker` values
-- a short explanation of why they refer to the same underlying event/end condition (using the normalized league/teams/timing/market-type reasoning)
-
-Print each candidate pair on its own, and keep reasoning concise and specific.
+For whichever mode(s) you run, follow that file's full instructions for:
+- comparison logic for market pairing
+- normalization and alias handling
+- guardrails for rejecting mismatches
+- required per-pair reasoning output format
 
 

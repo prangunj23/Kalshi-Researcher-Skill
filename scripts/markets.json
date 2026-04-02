@@ -1,0 +1,117 @@
+{   
+	"MCBK": {
+        "Name": "Men's College Basketball",
+		"Game": "NCAAMB",
+		"Futures": "MARMAD"
+	},
+	"MPBK": {
+        "Name": "Men's Professional Basketball",
+		"Game": "NBA",
+		"Futures": "NBA"
+	},
+    "WCB": {
+        "Name": "Women's College Basketball",
+        "Game": "NCAAWB",
+        "Futures": "WMARMAD"
+    },
+    "MPBE": {
+        "Name": "Men's Professional Baseball",
+        "Game": "MLB",
+        "Futures": "MLB"
+    },
+    "MCBE": {
+        "Name": "Men's College Baseball",
+        "Game": "NCAABB",
+        "Futures": "NCAABB"
+    },
+    "WT": {
+        "Name": "Women's Tennis",
+        "Game": "WTA",
+        "Futures": "WFO"
+    },
+    "MT": {
+        "Name": "Men's Tennis",
+        "Game": "ATP",
+        "Futures": "FO"
+    },
+    "MIS": {
+        "Name": "Men's International Soccer",
+        "Game": "FIFA",
+        "Futures": ["MENWORLDCUP","WCROUND"]
+    },
+    "UMCL": {
+        "Name": "UEFA Mens Champions League",
+        "Game": "UCL",
+        "Futures": "UCL"
+    },
+    "EPL": {
+        "Name": "English Premier League",
+        "Game": "EPL",
+        "Futures": "EPL"
+    },
+    "BSA": {
+        "Name": "Brazilian Serie A",
+        "Game": "BRASILEIRO",
+        "Futures": "BRASILEIRO"
+    },
+    "SA": {
+        "Name": "Serie A",
+        "Game": "SERIEA",
+        "Futures": "SERIEA"
+    },
+    "LL": {
+        "Name": "La Liga",
+        "Game": "LALIGA",
+        "Futures": "LALIGA"
+    },
+    "MLS": {
+        "Name": "Major League Soccer",
+        "Game": "MLS",
+        "Futures": "MLS"
+    },
+    "UWCL": {
+        "Name": "UEFA Womens Champions League",
+        "Game": "UCLW",
+        "Futures": "UCLW"
+    },
+    "L1": {
+        "Name": "Ligue 1",
+        "Game": "LIGUE1",
+        "Futures": "LIGUE1"
+    },
+    "B": {
+        "Name": "Bundesliga",
+        "Game": "BUNDESLIGA",
+        "Futures": "BUNDESLIGA"
+    },
+    "NHL": {
+        "Name": "National Hockey League",
+        "Game": "NHL",
+        "Futures": ["NHL", "TEAMSINSC"]
+    },
+    "MCH": {
+        "Name": "Men's Collegiate Hockey",
+        "Game": "NCAAHOCKEY",
+        "Futures": "NCAAHOCKEY"
+    },
+    "UFC": {
+        "Name": "Ultimate Fighter Championship",
+        "Game": "UFC",
+        "Futures": "UFC"
+    },
+    "IPL": {
+        "Name": "Indian Premier League",
+        "Game": "IPL",
+        "Futures": "IPL"
+    },
+    "Bo": {
+        "Name": "Boxing",
+        "Game": "BOXING",
+        "Futures": "WBC"
+    },
+    "MCL": {
+        "Name": "Men's College Lacrosse",
+        "Game": "NCAAMLAX",
+        "Futures": "NCAALAX"
+    }
+}
