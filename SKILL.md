@@ -1,5 +1,5 @@
 ---
-name: Kalshi-Researcher-Skill
+name: kalshi-researcher-skill
 description: A skill that searches Kalshi markets for arbitrage opportunities
 ---
 # Kalshi Market Arbitrage Finding Skill
