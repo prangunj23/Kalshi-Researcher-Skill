@@ -67,7 +67,7 @@ def get_all_markets(available_markets, ticker_idx, market_ticker):
 
 def main():
 
-    markets = sys.argv[1]
+    markets = sys.argv[1:]
     if not markets:
         print("Usage: python scripts/kalshi_markets.py <MARKET_CODE_1> <MARKET_CODE_2> ...")
         print("Example: python scripts/kalshi_markets.py MPBK NHL")
